@@ -20,11 +20,14 @@ pipeline:
     environment:
       - DOCKER_LAUNCH_DEBUG=true
     image: plugins/docker
-    repo: quay.io/ipedrazas/drone-helm
+    repo: ipedrazas/drone-helm
+    username: $$DOCKER_USERNAME
+    password: $$DOCKER_PASSWORD
+    email: $$DOCKER_EMAIL
     registry: quay.io
     tags:
       - latest
-      - ${DRONE_TAG}
+      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
 
   # build_docker_image:
   #   image: docker:1.12
