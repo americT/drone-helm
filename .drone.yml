@@ -15,30 +15,17 @@ pipeline:
       - go test -cover -coverprofile=coverage.out
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
-
-  docker:
+  build_docker_image:
+    image: docker
     environment:
-      - DOCKER_LAUNCH_DEBUG=true
-    image: plugins/docker
-    repo: ipedrazas/drone-helm
-    username: $$DOCKER_USERNAME
-    password: $$DOCKER_PASSWORD
-    email: $$DOCKER_EMAIL
-    registry: quay.io
-    tags:
-      - latest
-      - ${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
-
-  # build_docker_image:
-  #   image: docker:1.12
-  #   environment:
-  #     - DOCKER_HOST=tcp://127.0.0.1:2375
-  #   commands:
-  #     - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
-  #     - docker build -t image .
-  #     - docker tag image quay.io/ipedrazas/drone-helm:latest
-  #     - docker tag image quay.io/ipedrazas/drone-helm:${DRONE_TAG}
-  #     - docker push quay.io/ipedrazas/drone-helm
+      - DOCKER_HOST=tcp://127.0.0.1:2375
+      - TAG=${DRONE_BRANCH}-${DRONE_COMMIT_SHA:0:7}
+    commands:
+      - docker login -u="${QUAY_USERNAME}" -p="${QUAY_PASSWORD}" quay.io
+      - docker build -t image .
+      - docker tag image quay.io/ipedrazas/drone-helm:latest
+      - docker tag image quay.io/ipedrazas/drone-helm:${TAG}
+      - docker push quay.io/ipedrazas/drone-helm
 
   slack:
     image: plugins/slack
