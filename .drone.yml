@@ -17,6 +17,8 @@ pipeline:
 
 
   docker:
+    environment:
+      - DOCKER_LAUNCH_DEBUG=true
     image: plugins/docker
     repo: quay.io/ipedrazas/drone-helm
     registry: quay.io
